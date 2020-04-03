@@ -38,16 +38,16 @@ def team_crossover(teamA, teamB):
 def new_gen_generator(base_gen):
 #set a new generation based on previous generation "base_gen" (crossover)
     new_gen = base_gen
-    cross_tax = 80
-    crossovers_number = (len(base_gen)*cross_tax)/200
-    for k in range(int(crossovers_number)):
+    crossover_tax = 80
+    crossovers_times = (len(base_gen)*crossover_tax)/200
+    for k in range(int(crossovers_times)):
         random_team_A = random.choice(base_gen)
         base_gen.remove(random_team_A)
         random_team_B = random.choice(base_gen)
         base_gen.remove(random_team_B)
-        new_team = team_crossover(random_team_A, random_team_B)
-        new_gen.append(new_team[0])
-        new_gen.append(new_team[1])
+        new_teams = team_crossover(random_team_A, random_team_B)
+        new_gen.append(new_teams[0])
+        new_gen.append(new_teams[1])
     return new_gen
 
 
