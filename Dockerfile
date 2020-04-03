@@ -9,4 +9,6 @@ RUN pip install --upgrade pip && \
 
 COPY . .
 
-CMD ["python", "src/main.py"]
+RUN cd src
+
+CMD ["python", "main.py"]
