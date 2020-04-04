@@ -1,9 +1,9 @@
 import ga
-import pandas
+from pandas import read_csv
 import random
 import sys
 
-db = pandas.read_csv("database/base-pokemon.csv")
+db = read_csv("database/base-pokemon.csv")
 
 def execInput():
 #read the executation input if it exists (aux)
