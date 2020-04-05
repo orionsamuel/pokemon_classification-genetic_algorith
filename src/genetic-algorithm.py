@@ -1,9 +1,23 @@
-import ga
+from pyeasyga.pyeasyga  import GeneticAlgorithm
 from pandas import read_csv
 import random
 import sys
+"""
+ga = pyeasyga.GeneticAlgorithm(data,
+                               population_size=10,
+                               generations=20,
+                               crossover_probability=0.8,
+                               mutation_probability=0.05,
+                               elitism=True,
+                               maximise_fitness=True)
+"""
 
 db = read_csv("database/base-pokemon.csv")
+pokemons = list(db["pokedex_number"])
+pokemons.remove(809)
+pokemons.remove(808)
+ga = GeneticAlgorithm(pokemons, 10, 20, 0.8, 0, False, True)
+team_target = None
 
 def execInput():
 #read the executation input if it exists (aux)
@@ -18,14 +32,12 @@ def lstr_to_lint(slist):
         ilist.append(int(element))
     return ilist
 
-def base_gen_generator(length):
-#set a new base generation with a "lentgh" of this first population (first gen)
-    base_gen = []
-    pokemons = list(db["pokedex_number"])
-    for i in range(length):
-        new_team = [random.choice(pokemons), random.choice(pokemons), random.choice(pokemons)]
-        base_gen.append(new_team)
-    return base_gen
+
+def create_team(pokemons):
+#creating a team of 3 (individual)
+    return [random.choice(pokemons), random.choice(pokemons), random.choice(pokemons)]
+
+ga.create_individual = create_team
 
 def team_crossover(teamA, teamB):
 #making two new teams to compose the new generation
@@ -35,34 +47,59 @@ def team_crossover(teamA, teamB):
         teamB[k] = tmp
     return [teamA, teamB]
 
-def new_gen_generator(base_gen):
-#set a new generation based on previous generation "base_gen" (crossover)
-    new_gen = base_gen
-    crossover_tax = 80
-    crossovers_times = (len(base_gen)*crossover_tax)/200
-    for k in range(int(crossovers_times)):
-        random_team_A = random.choice(base_gen)
-        base_gen.remove(random_team_A)
-        random_team_B = random.choice(base_gen)
-        base_gen.remove(random_team_B)
-        new_teams = team_crossover(random_team_A, random_team_B)
-        new_gen.append(new_teams[0])
-        new_gen.append(new_teams[1])
-    return new_gen
+ga.crossover_function = team_crossover
 
+def team_selection(gen):
+    return random.choice(gen)
 
-def fitness(gen):
-#em produção
-    return
+ga.selection = team_selection
 
-def search_counters(team):
+def pokemon_battle(pokemon1, pokemon2):
+    pokemon1 += 1
+    pokemon2 += 1
+    pokemon1_types = [db.loc[pokemon1, "type1"], str(db.loc[pokemon1, "type2"])]
+    if 'nan' in pokemon1_types: pokemon1_types.remove('nan')
+    pokemon2_types = [db.loc[pokemon2, "type1"], str(db.loc[pokemon2, "type2"])]
+    if 'nan' in pokemon2_types: pokemon2_types.remove('nan')
+    pokemon1_cp = db.loc[pokemon1, "combat_point"]
+    pokemon2_cp = db.loc[pokemon2, "combat_point"]
+    pokemon1_against = []
+    pokemon2_against = []
+    for tp in pokemon1_types:
+        pokemon1_against.append(db.loc[pokemon2, "against_"+str(tp)])
+    for tp in pokemon2_types:
+        pokemon2_against.append(db.loc[pokemon1, "against_"+str(tp)])
+    pokemon1_against.sort(reverse=True)
+    pokemon2_against.sort(reverse=True)
+
+    if pokemon1_cp*pokemon1_against[0]>=pokemon2_cp*pokemon2_against[0]:
+        return pokemon1-1
+    else:
+        return pokemon2-1
+
+def fitness(individual, pokemons):
+    counter_points = 0
+    target_points = 0
+    print(individual)
+    for pokemon_counter in individual:
+        for pokemon_target in team_target:
+            winner = pokemon_battle(pokemon_counter, pokemon_target)
+            if winner == pokemon_counter:
+                counter_points+=1
+                target_points-=1
+            elif  winner == pokemon_target:
+                counter_points-=1
+                target_points+=1
+
+    fitness = counter_points - target_points
+    return fitness
+
+ga.fitness_function = fitness
+
+def search_counters():
 #application of ga
-    base_gen = base_gen_generator(5)
-    new_gen = new_gen_generator(base_gen)
-    pokemons = list(db["pokedex_number"])
-    while fitness(new_gen):
-        base_gen = new_gen
-        new_gen = new_gen_generator(base_gen)
+    ga.run()
+    print(ga.best_individual())
 
 if __name__ == '__main__':
 #main
@@ -77,4 +114,4 @@ if __name__ == '__main__':
     else:
         print("Bad input!")
         exit()
-    search_counters(team_target)
+    search_counters()

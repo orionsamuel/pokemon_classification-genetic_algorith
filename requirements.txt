@@ -5,5 +5,5 @@ pandas
 scikit-learn
 keras
 tensorflow
-ga
+pyeasyga
 ACO-Pants
