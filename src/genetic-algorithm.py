@@ -2,6 +2,7 @@ from pyeasyga.pyeasyga  import GeneticAlgorithm
 from pandas import read_csv
 import random
 import sys
+
 """
 ga = pyeasyga.GeneticAlgorithm(data,
                                population_size=10,
@@ -27,7 +28,10 @@ def lstr_to_lint(slist):
 #cast list of strings to a list of integers (aux)
     ilist = []
     for element in slist:
-        ilist.append(int(element))
+        if element.isnumeric():
+            ilist.append(int(element))
+        else:
+            ilist.append(pokename_to_pokenumber(element))
     return ilist
 
 
@@ -38,6 +42,7 @@ def create_team(pokemons):
 ga.create_individual = create_team
 
 def team_mutation(team):
+#this function will mutate a team acording mutation tax, creating a new team in scope (mutation)
     mutate_index = random.randrange(len(team))
     team[mutate_index] = random.choice(pokemons)
 
@@ -59,6 +64,7 @@ def team_selection(gen):
 ga.selection = team_selection
 
 def pokemon_validation(pokemon):
+#validation for meltan and melmetal in our database
     if pokemon == 808:
         return 649
     elif pokemon == 809:
@@ -67,6 +73,7 @@ def pokemon_validation(pokemon):
         return pokemon - 1
 
 def pokemon_validation_reverse(pokemon):
+#pokemon_validation ^-1
     if pokemon == 649:
         return 808
     elif pokemon == 650:
@@ -76,6 +83,13 @@ def pokemon_validation_reverse(pokemon):
 
 
 def pokemon_battle(pokemon1, pokemon2):
+    """
+    return the result os a battle between two pokemons:
+    if result>0 => pokemon1 wins,
+    if result<0 => pokemon2 wins,
+    case result = 0, means possibly occurred a draw
+    
+    """
     pokemon1 = pokemon_validation(pokemon1)
     pokemon2 = pokemon_validation(pokemon2)
     pokemon1_types = [db.loc[pokemon1, "type1"], str(db.loc[pokemon1, "type2"])]
@@ -97,6 +111,7 @@ def pokemon_battle(pokemon1, pokemon2):
     return pokemon1_cp*pokemon1_against[0] - pokemon2_cp*pokemon2_against[0]
 
 def fitness(individual, pokemons):
+#fitness function will generate a value to rank each team (fitness)
     fitness = 0
     for pokemon_counter in individual:
         for pokemon_target in team_target:
@@ -106,11 +121,24 @@ def fitness(individual, pokemons):
 
 ga.fitness_function = fitness
 
+def pokename_to_pokenumber(pokename):
+#receive a pokemon name, returns his pokedex number
+    for i in range(len(db["name"])):
+        if pokename==db["name"][i]:
+            return db.pokedex_number[i]
+
+def pokenumber_to_pokename(pokenumber):
+#receive a pokedex_number, returns his pokemon name
+    for i in range(len(db["pokedex_number"])):
+        if pokenumber==db["pokedex_number"][i]:
+            return db.name[i]
+
+
 def search_counters():
 #application of ga
     ga.run()
-    print(list(ga.last_generation()))
-    print(ga.best_individual())
+    for pokemon in ga.best_individual()[1]:
+        print(pokenumber_to_pokename(pokemon))
 
 if __name__ == '__main__':
 #main
