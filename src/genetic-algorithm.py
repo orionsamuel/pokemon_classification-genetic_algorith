@@ -16,7 +16,7 @@ db = read_csv("database/base-pokemon.csv")
 pokemons = list(db["pokedex_number"])
 pokemons.remove(809)
 pokemons.remove(808)
-ga = GeneticAlgorithm(pokemons, 10, 20, 0.8, 0, False, True)
+ga = GeneticAlgorithm(pokemons, 15, 30, 0.8, 0, False, True)
 team_target = None
 
 def execInput():
@@ -55,8 +55,8 @@ def team_selection(gen):
 ga.selection = team_selection
 
 def pokemon_battle(pokemon1, pokemon2):
-    pokemon1 += 1
-    pokemon2 += 1
+    pokemon1 -= 1
+    pokemon2 -= 1
     pokemon1_types = [db.loc[pokemon1, "type1"], str(db.loc[pokemon1, "type2"])]
     if 'nan' in pokemon1_types: pokemon1_types.remove('nan')
     pokemon2_types = [db.loc[pokemon2, "type1"], str(db.loc[pokemon2, "type2"])]
@@ -65,22 +65,22 @@ def pokemon_battle(pokemon1, pokemon2):
     pokemon2_cp = db.loc[pokemon2, "combat_point"]
     pokemon1_against = []
     pokemon2_against = []
+    print(pokemon1_types, pokemon2_types)
     for tp in pokemon1_types:
-        pokemon1_against.append(db.loc[pokemon2, "against_"+str(tp)])
+        pokemon1_against.append(db.loc[pokemon2, "against_"+tp])
     for tp in pokemon2_types:
-        pokemon2_against.append(db.loc[pokemon1, "against_"+str(tp)])
+        pokemon2_against.append(db.loc[pokemon1, "against_"+tp])
     pokemon1_against.sort(reverse=True)
     pokemon2_against.sort(reverse=True)
 
     if pokemon1_cp*pokemon1_against[0]>=pokemon2_cp*pokemon2_against[0]:
-        return pokemon1-1
+        return pokemon1+1
     else:
-        return pokemon2-1
+        return pokemon2+1
 
 def fitness(individual, pokemons):
     counter_points = 0
     target_points = 0
-    print(individual)
     for pokemon_counter in individual:
         for pokemon_target in team_target:
             winner = pokemon_battle(pokemon_counter, pokemon_target)
@@ -92,6 +92,7 @@ def fitness(individual, pokemons):
                 target_points+=1
 
     fitness = counter_points - target_points
+    print(individual, counter_points, target_points, fitness)
     return fitness
 
 ga.fitness_function = fitness
