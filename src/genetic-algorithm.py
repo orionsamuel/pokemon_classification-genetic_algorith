@@ -12,7 +12,7 @@ ga = pyeasyga.GeneticAlgorithm(data,
                                maximise_fitness=True)
 """
 
-db = read_csv("database/base-pokemon.csv")
+db = read_csv("../database/base-pokemon.csv")
 pokemons = list(db["pokedex_number"])
 ga = GeneticAlgorithm(pokemons, 20, 20, 0.8, 0, False, True)
 team_target = None
