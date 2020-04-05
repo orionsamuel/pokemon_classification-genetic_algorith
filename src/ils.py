@@ -6,7 +6,11 @@ db = read_csv("../database/base-pokemon.csv")
 
 # Lista dos pokemon counter
 team_selection = []
-team_selection_name = []
+best_team_selection = []
+best_team_selection_name = []
+
+# Inicialização da avaliação
+avaliation_global = 0
 
 # Lista de pokemon de entrada
 team_target_name = ["Bulbasaur", "Charmander", "Squirtle"]
@@ -23,8 +27,8 @@ def name_team_counter():
     cont = 0
     while (cont < 3):
         for i in range(db.pokedex_number.size):
-            if(db.pokedex_number[i] == team_selection[cont]):
-                team_selection_name.append(db.name[i])
+            if(db.pokedex_number[i] == best_team_selection[cont]):
+                best_team_selection_name.append(db.name[i])
         cont += 1
 
 # Pega os ID dos pokemon
@@ -64,18 +68,41 @@ def fitness(team_selection, team_target):
             fitness+=pokemon_battle(pokemon_counter, pokemon_target)
 
     return fitness
-    
 
+# Retorna o melhor time
+def return_best_team(avaliation):
+    if(fitness(team_selection, team_target) > avaliation):
+        avaliation = fitness(team_selection, team_target)
+        print(avaliation)
+        for i in range(len(team_selection)):
+            best_team_selection[i] = team_selection[i]
+    else:
+        local_search(team_selection)
+    return avaliation
+
+# Busca local
+def local_search(team_selection):
+    print()    
+
+# Função que executa tudo
+def run(avaliation):
+    creat_team()
+    getId()
+    for i in team_selection:
+        best_team_selection.append(i)
+    alaviation = return_best_team(avaliation)
+    print(avaliation)
+    return avaliation
 
 # main
 if __name__ == '__main__':
-    creat_team()
-    getId()
+    
+    avaliation_global = run(avaliation_global)
     name_team_counter()
 
     print("Time Entrada:")
     print(team_target_name)
-    print("Time Coun    ter:")
-    print(team_selection_name)
+    print("Time Counter:")
+    print(best_team_selection_name)
     print("Fitness")
-    print(fitness(team_selection, team_target))
+    print(avaliation_global)
