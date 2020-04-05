@@ -15,7 +15,7 @@ ga = pyeasyga.GeneticAlgorithm(data,
 
 db = read_csv("database/base-pokemon.csv")
 pokemons = list(db["pokedex_number"])
-ga = GeneticAlgorithm(pokemons, 20, 100, 0.8, 0.2, False, True)
+ga = GeneticAlgorithm(pokemons, 50, 15, 0.8, 0.2, True, True)
 team_target = None
 
 def execInput():
@@ -50,7 +50,7 @@ ga.mutate_function = team_mutation
 
 def team_crossover(teamA, teamB):
 #making two new teams to compose the new generation
-    for k in range(0):
+    for k in range(random.randrange(len(teamA))):
         tmp = teamA[k]
         teamA[k] = teamB[k]
         teamB[k] = tmp
@@ -139,6 +139,7 @@ def search_counters():
     ga.run()
     for pokemon in ga.best_individual()[1]:
         print(pokenumber_to_pokename(pokemon))
+    print(ga.best_individual()[0])
 
 if __name__ == '__main__':
 #main
