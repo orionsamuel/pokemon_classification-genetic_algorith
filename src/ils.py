@@ -90,10 +90,10 @@ def return_best_team():
 
 # Busca local
 def local_search(team_selection):
-    for  i in range(1000):
+    for  i in range(750):
         change_num = randint(1,3)
         for i in range(change_num):
-            counter = randint(db.pokedex_number[0],db.pokedex_number.size-1)
+            counter = randint(db.pokedex_number[0],db.pokedex_number.size-2)
             team_selection[i] = counter
         avaliation_full.append(((fitness(team_selection, team_target)),team_selection))
         
@@ -119,5 +119,6 @@ if __name__ == '__main__':
     team_target_name = execInput()
     
     run()
+
 
     
