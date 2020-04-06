@@ -34,7 +34,7 @@ def fitness(team_selection, team_target):
     return fitness
 
 team_target = [474, 567, 639]
-team_selection = [610, 34, 551]
+team_selection = [9, 632, 423]
 
 avaliacao = fitness(team_selection, team_target)
 print(avaliacao)

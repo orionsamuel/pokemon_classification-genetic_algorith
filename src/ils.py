@@ -13,6 +13,7 @@ best_team_selection_name = []
 #avaliation_global = 0
 avaliation_full = []
 avaliation = []
+teams = []
 
 # Lista de pokemon de entrada
 team_target_name = []
@@ -79,40 +80,48 @@ def fitness(team_selection, team_target):
 
 # Retorna o melhor time
 def return_best_team():
-    for i in range(len(avaliation_full)):
-        avaliation.append(avaliation_full[i][0])
-    best_avaliation = max(avaliation)
-    for i in range(len(avaliation_full)):
-        if(avaliation_full[i][0] == best_avaliation):
-            print(avaliation_full[i])
-            best_team_selection = avaliation_full[i][1]
-    print("Melhor avaliação: " + str(best_avaliation))
+    print("Começa aqui a separação")
+    for i in range(len(avaliation)):
+        print(str(teams[i]) + " " + str(avaliation[i]))
+    
 
 # Busca local
-def local_search(team_selection):
+def local_search():
+    global best_team_selection
+    global team_selection
+    best_avaliation_local = 0
     for  i in range(100):
         change_num = randint(1,3)
         for j in range(change_num):
             counter = randint(db.pokedex_number[0],db.pokedex_number.size-2)
             team_selection[j] = counter
         get_fitness = fitness(team_selection, team_target)
-        avaliation_full.append((get_fitness,team_selection))
-        print(str(team_selection) + " " + str(get_fitness))
+        if(get_fitness > best_avaliation_local):
+            best_avaliation_local = get_fitness
+            best_team_selection = team_selection
+            print(str(get_fitness) + " " + str(team_selection) + " " + str(best_team_selection))
+    print(team_selection)
+    print(best_team_selection)
+    return best_avaliation_local, best_team_selection
         
 
 # Função que executa tudo
 def run():
+    global best_team_selection
+    global team_selection
     creat_team()
     getId()
     for i in team_selection:
         best_team_selection.append(i)
-    print("Time Entrada:")
+    print("Team Target:")
     print(team_target_name)
-    local_search(team_selection)
-    return_best_team()
+    best_avaliation, best_team_selection = local_search()
+    #return_best_team()
     name_team_counter()
-    print("Time Counter:")
+    print("Best Avaliation : " + str(best_avaliation))
+    print("Team Counter:")
     print(best_team_selection_name)
+    print(best_team_selection)
 
 # main
 if __name__ == '__main__':
