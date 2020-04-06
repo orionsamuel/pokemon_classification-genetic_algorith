@@ -90,7 +90,7 @@ def return_best_team():
 
 # Busca local
 def local_search(team_selection):
-    for  i in range(220):
+    for  i in range(1000):
         change_num = randint(1,3)
         for i in range(change_num):
             counter = randint(db.pokedex_number[0],db.pokedex_number.size-1)
