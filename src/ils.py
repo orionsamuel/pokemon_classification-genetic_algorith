@@ -9,6 +9,9 @@ team_selection = []
 best_team_selection = []
 best_team_selection_name = []
 
+meltan = "Meltan"
+melmetal = "Melmetal"
+
 # Lista de pokemon de entrada
 team_target_name = []
 team_target = []
@@ -31,7 +34,12 @@ def name_team_counter():
     while (cont < 3):
         for i in range(db.pokedex_number.size):
             if(db.pokedex_number[i] == best_team_selection[cont]):
-                best_team_selection_name.append(db.name[i])
+                if(i == 650):
+                    best_team_selection_name.append(meltan)
+                elif(i == 651):
+                    best_team_selection_name.append(melmetal)
+                else:
+                    best_team_selection_name.append(db.name[i])
         cont += 1
 
 # Pega os ID dos pokemon
