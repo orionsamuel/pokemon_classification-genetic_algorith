@@ -43,8 +43,20 @@ def getId():
                 team_target.append(db.pokedex_number[i])
         cont += 1
 
+def pokemon_validation(pokemon):
+#validation for meltan and melmetal in our database
+    if pokemon == 808:
+        return 650
+    elif pokemon == 809:
+        return 651
+    else:
+        return pokemon
+    
+
 # Realiza a batalha entre dois pokemon para saber quem é o mais forte
 def pokemon_battle(pokemon1, pokemon2):
+    pokemon1 = pokemon_validation(pokemon1)
+    pokemon2 = pokemon_validation(pokemon2)
     pokemon1_types = [db.loc[pokemon1-1, "type1"], str(db.loc[pokemon1-1, "type2"])]
     if 'nan' in pokemon1_types: pokemon1_types.remove('nan')
     pokemon2_types = [db.loc[pokemon2-1, "type1"], str(db.loc[pokemon2-1, "type2"])]
@@ -80,7 +92,7 @@ def local_search():
     for  i in range(1000):
         change_num = randint(1,3)
         for j in range(change_num):
-            counter = randint(db.pokedex_number[0],db.pokedex_number.size-2)
+            counter = randint(db.pokedex_number[0],db.pokedex_number.size)
             team_selection[j] = counter
         get_fitness = fitness(team_selection, team_target)
         if(get_fitness > best_avaliation_local):
