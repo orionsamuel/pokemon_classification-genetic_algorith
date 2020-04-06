@@ -9,12 +9,6 @@ team_selection = []
 best_team_selection = []
 best_team_selection_name = []
 
-# Inicialização da avaliação
-#avaliation_global = 0
-avaliation_full = []
-avaliation = []
-teams = []
-
 # Lista de pokemon de entrada
 team_target_name = []
 team_target = []
@@ -78,19 +72,12 @@ def fitness(team_selection, team_target):
 
     return fitness
 
-# Retorna o melhor time
-def return_best_team():
-    print("Começa aqui a separação")
-    for i in range(len(avaliation)):
-        print(str(teams[i]) + " " + str(avaliation[i]))
-    
-
 # Busca local
 def local_search():
     global best_team_selection
     global team_selection
     best_avaliation_local = 0
-    for  i in range(100):
+    for  i in range(1000):
         change_num = randint(1,3)
         for j in range(change_num):
             counter = randint(db.pokedex_number[0],db.pokedex_number.size-2)
@@ -98,10 +85,7 @@ def local_search():
         get_fitness = fitness(team_selection, team_target)
         if(get_fitness > best_avaliation_local):
             best_avaliation_local = get_fitness
-            best_team_selection = team_selection
-            print(str(get_fitness) + " " + str(team_selection) + " " + str(best_team_selection))
-    print(team_selection)
-    print(best_team_selection)
+            best_team_selection = team_selection.copy()
     return best_avaliation_local, best_team_selection
         
 
@@ -116,7 +100,6 @@ def run():
     print("Team Target:")
     print(team_target_name)
     best_avaliation, best_team_selection = local_search()
-    #return_best_team()
     name_team_counter()
     print("Best Avaliation : " + str(best_avaliation))
     print("Team Counter:")
