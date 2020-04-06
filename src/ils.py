@@ -50,18 +50,18 @@ def getId():
 
 # Realiza a batalha entre dois pokemon para saber quem é o mais forte
 def pokemon_battle(pokemon1, pokemon2):
-    pokemon1_types = [db.loc[pokemon1, "type1"], str(db.loc[pokemon1, "type2"])]
+    pokemon1_types = [db.loc[pokemon1-1, "type1"], str(db.loc[pokemon1-1, "type2"])]
     if 'nan' in pokemon1_types: pokemon1_types.remove('nan')
-    pokemon2_types = [db.loc[pokemon2, "type1"], str(db.loc[pokemon2, "type2"])]
+    pokemon2_types = [db.loc[pokemon2-1, "type1"], str(db.loc[pokemon2-1, "type2"])]
     if 'nan' in pokemon2_types: pokemon2_types.remove('nan')
-    pokemon1_cp = db.loc[pokemon1, "combat_point"]
-    pokemon2_cp = db.loc[pokemon2, "combat_point"]
+    pokemon1_cp = db.loc[pokemon1-1, "combat_point"]
+    pokemon2_cp = db.loc[pokemon2-1, "combat_point"]
     pokemon1_against = []
     pokemon2_against = []
     for tp in pokemon1_types:
-        pokemon1_against.append(db.loc[pokemon2, "against_"+tp])
+        pokemon1_against.append(db.loc[pokemon2-1, "against_"+tp])
     for tp in pokemon2_types:
-        pokemon2_against.append(db.loc[pokemon1, "against_"+tp])
+        pokemon2_against.append(db.loc[pokemon1-1, "against_"+tp])
 
     pokemon1_against.sort(reverse=True)
     pokemon2_against.sort(reverse=True)
@@ -84,18 +84,20 @@ def return_best_team():
     best_avaliation = max(avaliation)
     for i in range(len(avaliation_full)):
         if(avaliation_full[i][0] == best_avaliation):
-            for j in range(3):
-                best_team_selection[j] = avaliation_full[i][1][j]
+            print(avaliation_full[i])
+            best_team_selection = avaliation_full[i][1]
     print("Melhor avaliação: " + str(best_avaliation))
 
 # Busca local
 def local_search(team_selection):
-    for  i in range(750):
+    for  i in range(100):
         change_num = randint(1,3)
-        for i in range(change_num):
+        for j in range(change_num):
             counter = randint(db.pokedex_number[0],db.pokedex_number.size-2)
-            team_selection[i] = counter
-        avaliation_full.append(((fitness(team_selection, team_target)),team_selection))
+            team_selection[j] = counter
+        get_fitness = fitness(team_selection, team_target)
+        avaliation_full.append((get_fitness,team_selection))
+        print(str(team_selection) + " " + str(get_fitness))
         
 
 # Função que executa tudo
@@ -119,6 +121,8 @@ if __name__ == '__main__':
     team_target_name = execInput()
     
     run()
+
+    
 
 
     
