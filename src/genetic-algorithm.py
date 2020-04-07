@@ -170,11 +170,9 @@ def sort_best_team(counter):
         counter_copy.remove(counter[index])
     tmp = None
     for k in team_target:
-        for h in target:
-            if k == h:
-                tmp = counter[team_target.index(k)]
-                counter[team_target.index(k)] = counter[target.index(h)]
-                counter[target.index(h)] = tmp
+        tmp = counter[team_target.index(k)]
+        counter[team_target.index(k)] = counter[target.index(k)]
+        counter[target.index(k)] = tmp
     return counter
 
 def search_counters():
