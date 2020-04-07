@@ -1,9 +1,2 @@
-numpy
-Cython
-scipy
 pandas
-scikit-learn
-keras
-tensorflow
 pyeasyga
-ACO-Pants
