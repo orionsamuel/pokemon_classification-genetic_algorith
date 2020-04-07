@@ -175,11 +175,24 @@ def sort_best_team(counter):
         counter[target.index(k)] = tmp
     return counter
 
+def best_typeset_against(pokemon1, pokemon2):
+    pokemon1 = pokemon_validation(pokemon1)
+    pokemon2 = pokemon_validation(pokemon2)
+    pokemon1_types = [db.loc[pokemon1, "type1"], str(db.loc[pokemon1, "type2"])]
+    if 'nan' in pokemon1_types: pokemon1_types.remove('nan')
+    pokemon1_against = []
+    for tp in pokemon1_types:
+        pokemon1_against.append(db.loc[pokemon2, "against_"+tp])
+
+    return pokemon1_types[pokemon1_against.index(max(pokemon1_against))]
+
+
 def search_counters():
 #application of ga
     ga.run()
-    for pokemon in sort_best_team(ga.best_individual()[1]):
-        print(pokenumber_to_pokename(pokemon))
+    best_team = sort_best_team(ga.best_individual()[1])
+    for i in range(len(best_team)):
+        print(pokenumber_to_pokename(best_team[i])+" ("+best_typeset_against(best_team[i], team_target[i])+" typeset)")
     print(ga.best_individual()[0])
 
 if __name__ == '__main__':
