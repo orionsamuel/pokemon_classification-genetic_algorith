@@ -15,7 +15,7 @@ ga = pyeasyga.GeneticAlgorithm(data,
 
 db = read_csv("database/base-pokemon.csv")
 pokemons = list(db["pokedex_number"])
-ga = GeneticAlgorithm(pokemons, 50, 15, 0.8, 0.2, True, True)
+ga = GeneticAlgorithm(pokemons, 50, 20, 0.8, 0.2, True, True)
 team_target = None
 
 def execInput():
@@ -133,11 +133,54 @@ def pokenumber_to_pokename(pokenumber):
         if pokenumber==db["pokedex_number"][i]:
             return db.name[i]
 
+def is_sorted_by_CP_reverse(team):
+#verify if a team is sorted by CP in a reverse way (higher to lower)
+    for index in range(len(team)-1):
+        if(db.loc[team[index], "combat_point"] < db.loc[team[index+1], "combat_point"]):
+            return False
+    return True
+
+def sort_by_cp_reverse(team):
+#sort a team by the CP, higher to lower (reverse)
+    tmp = None
+    while not is_sorted_by_CP_reverse(team):
+        for index in range(len(team)-1):
+            if db.loc[team[index], "combat_point"] < db.loc[team[index+1], "combat_point"]:
+                tmp = team[index]
+                team[index] = team[index+1]
+                team[index+1] = tmp
+    return team
+
+def best_against(team, target):
+#select the best pokemon of a team against one pokemon target
+    result = []
+    if len(team)>1:
+        for pokemon in team:
+            result.append(pokemon_battle(pokemon, target))
+        return team[result.index(max(result))]
+    else:
+        return team[0]
+
+def sort_best_team(counter):
+#sort the counter team to the best way against team target
+    target = sort_by_cp_reverse(team_target.copy())
+    counter_copy = counter.copy()
+    for index in range(len(target)):
+        counter[index] = best_against(counter_copy, target[index])
+        counter_copy.remove(counter[index])
+    tmp = None
+    for k in team_target:
+        for h in target:
+            if k == h:
+                tmp = counter[team_target.index(k)]
+                counter[team_target.index(k)] = counter[target.index(h)]
+                counter[target.index(h)] = tmp
+    return counter
 
 def search_counters():
 #application of ga
     ga.run()
-    for pokemon in ga.best_individual()[1]:
+    for pokemon in sort_best_team(ga.best_individual()[1]):
         print(pokenumber_to_pokename(pokemon))
     print(ga.best_individual()[0])
 
