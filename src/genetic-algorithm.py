@@ -142,6 +142,8 @@ def is_sorted_by_CP_reverse(team):
 
 def sort_by_cp_reverse(team):
 #sort a team by the CP, higher to lower (reverse)
+    for x in range(len(team)):
+        team[x] = pokemon_validation(team[x])
     tmp = None
     while not is_sorted_by_CP_reverse(team):
         for index in range(len(team)-1):
@@ -149,6 +151,8 @@ def sort_by_cp_reverse(team):
                 tmp = team[index]
                 team[index] = team[index+1]
                 team[index+1] = tmp
+    for x in range(len(team)):
+        team[x] = pokemon_validation_reverse(team[x])
     return team
 
 def best_against(team, target):
