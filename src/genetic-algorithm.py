@@ -1,6 +1,6 @@
 from pyeasyga.pyeasyga  import GeneticAlgorithm
 from pandas import read_csv
-import random
+from random import randrange, choice
 import sys
 
 """
@@ -22,16 +22,19 @@ def execInput():
 #read the executation input if it exists (aux)
     print("Let's input  Pokomeon GO team or a boss raid to counter!")
     team = input("Input your team by pokedexID spliting by " "(space): ")
+
     return team.split(" ")
 
-def lstr_to_lint(slist): 
+def lstr_to_lint(slist):
 #cast list of strings to a list of integers (aux)
     ilist = []
+
     for element in slist:
         if element.isnumeric():
             ilist.append(int(element))
         else:
             ilist.append(pokename_to_pokenumber(element))
+
     return ilist
 
 
@@ -43,23 +46,24 @@ ga.create_individual = create_team
 
 def team_mutation(team):
 #this function will mutate a team acording mutation tax, creating a new team in scope (mutation)
-    mutate_index = random.randrange(len(team))
-    team[mutate_index] = random.choice(pokemons)
+    mutate_index = randrange(len(team))
+    team[mutate_index] = choice(pokemons)
 
 ga.mutate_function = team_mutation
 
 def team_crossover(teamA, teamB):
 #making two new teams to compose the new generation
-    for k in range(random.randrange(len(teamA))):
+    for k in range(randrange(len(teamA))):
         tmp = teamA[k]
         teamA[k] = teamB[k]
         teamB[k] = tmp
+
     return [teamA, teamB]
 
 ga.crossover_function = team_crossover
 
 def team_selection(gen):
-    return random.choice(gen)
+    return choice(gen)
 
 ga.selection = team_selection
 
@@ -88,20 +92,24 @@ def pokemon_battle(pokemon1, pokemon2):
     if result>0 => pokemon1 wins,
     if result<0 => pokemon2 wins,
     case result = 0, means possibly occurred a draw
-    
+
     """
     pokemon1 = pokemon_validation(pokemon1)
     pokemon2 = pokemon_validation(pokemon2)
     pokemon1_types = [db.loc[pokemon1, "type1"], str(db.loc[pokemon1, "type2"])]
+
     if 'nan' in pokemon1_types: pokemon1_types.remove('nan')
     pokemon2_types = [db.loc[pokemon2, "type1"], str(db.loc[pokemon2, "type2"])]
+
     if 'nan' in pokemon2_types: pokemon2_types.remove('nan')
     pokemon1_cp = db.loc[pokemon1, "combat_point"]
     pokemon2_cp = db.loc[pokemon2, "combat_point"]
     pokemon1_against = []
     pokemon2_against = []
+
     for tp in pokemon1_types:
         pokemon1_against.append(db.loc[pokemon2, "against_"+tp])
+
     for tp in pokemon2_types:
         pokemon2_against.append(db.loc[pokemon1, "against_"+tp])
 
@@ -113,6 +121,7 @@ def pokemon_battle(pokemon1, pokemon2):
 def fitness(individual, pokemons):
 #fitness function will generate a value to rank each team (fitness)
     fitness = 0
+
     for pokemon_counter in individual:
         for pokemon_target in team_target:
             fitness+=pokemon_battle(pokemon_counter, pokemon_target)
@@ -137,20 +146,23 @@ def pokenumber_to_pokename(pokenumber):
 def search_counters():
 #application of ga
     ga.run()
+
     for pokemon in ga.best_individual()[1]:
         print(pokenumber_to_pokename(pokemon))
     print(ga.best_individual()[0])
 
+
 if __name__ == '__main__':
 #main
     team_target = []
+
     if len(sys.argv)<4:
         team_target = lstr_to_lint(execInput())
-        
+
     elif len(sys.argv)==4:
         del sys.argv[0]
         team_target = lstr_to_lint(sys.argv)
-        
+
     else:
         print("Bad input!")
         exit()
