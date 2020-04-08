@@ -59,7 +59,10 @@ def team_crossover(teamA, teamB):
 ga.crossover_function = team_crossover
 
 def team_selection(gen):
-    return random.choice(gen)
+    bests = []
+    for i in range(int(len(gen)/5)):
+        bests.append(gen[i])
+    return random.choice(bests)
 
 ga.selection = team_selection
 
