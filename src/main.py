@@ -1,5 +1,5 @@
 import sys
-from genetic_algorithm import search_counters
+from genetic_algorithm import search_counters, execInput
 
 def print_result(result):
     for i in range(len(result[0])):
