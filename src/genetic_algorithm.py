@@ -192,13 +192,25 @@ def best_typeset_against(pokemon1, pokemon2):
     return pokemon1_types[pokemon1_against.index(max(pokemon1_against))]
 
 
-def search_counters(team):
-#application of ga to counter a "team"
-    global team_target 
+def search_counters(team, return_names=True):
+    """
+    "team" - param1 : the team to be countered
+    return_names - param2: if true return the counter team by the names, else return counter team by pokedex number
+
+    application of ga to counter a "team"  and return a tuple:
+    tuple[0] -> counter team of "team"
+    tuple[1] -> best type for move sets of counter[k] against "team"[k]
+    tuple[2] -> fitness, how good is the counter team against "team"
+    """
+    global team_target
     team_target = lstr_to_lint(team.copy()) 
     ga.run()
     best_team = sort_best_team(ga.best_individual()[1])
+    best_move_sets = []
     for i in range(len(best_team)):
-        print(pokenumber_to_pokename(best_team[i])+" ("+best_typeset_against(best_team[i], team_target[i])+" move set)")
-    print(ga.best_individual()[0])
+        best_move_sets.append(best_typeset_against(best_team[i], team_target[i]))
+        if return_names:
+            best_team[i] = pokenumber_to_pokename(best_team[i])
+    return best_team, best_move_sets, ga.best_individual()[0]
+
 
