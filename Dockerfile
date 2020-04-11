@@ -7,8 +7,6 @@ COPY requirements.txt /app/
 RUN pip install --upgrade pip && \
   pip install --no-cache -r requirements.txt
 
-COPY . .
+COPY . app/
 
-RUN cd src
-
-CMD ["python", "main.py"]
+CMD ["python", "src/main.py"]
