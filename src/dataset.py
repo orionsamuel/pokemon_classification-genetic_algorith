@@ -1,4 +1,4 @@
-from utils import get_db
+from pandas import read_csv
 
 
 class Singleton(type):
@@ -9,7 +9,7 @@ class Singleton(type):
         return cls._instances[cls]
 
 class PokemonsData(metaclass=Singleton):
-    df = get_db()
+    df = read_csv("database/base-pokemon.csv")
     range = df.pokedex_number.size
 
     def get_df(self):

@@ -21,7 +21,7 @@ def team_mutation(team):
     team in scope (mutation)"""
     db = PokemonsData()
     mutate_index = randrange(len(team))
-    team[mutate_index] = choice(db.get_range())
+    team[mutate_index] = choice(range(db.get_range()))
 
 
 def team_crossover(team1, team2):
@@ -40,7 +40,9 @@ def team_selection(gen):
 
 def search_counters(team_target, pokemons):
     print(team_target)
-    ga = GeneticAlgorithm(pokemons, 50, 15, 0.8, 0.2, True, True)
+    ga = GeneticAlgorithm(list(range(pokemons.get_range())), 50, 15, 0.8, 0.2,
+                          True,
+                          True)
     ga.create_individual = create_team
     ga.mutate_function = team_mutation
     ga.crossover_function = team_crossover
@@ -51,5 +53,5 @@ def search_counters(team_target, pokemons):
     print(team_target)
 
     for pokemon in ga.best_individual()[1]:
-        print(get_relative_pokename(pokemon))
+        print(get_relative_pokename(pokemon, pokemons.get_df()))
     print(ga.best_individual()[0])

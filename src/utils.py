@@ -35,7 +35,11 @@ def create_team(pokemons):
     :return: A team with three pokemon's in a list
     """
 
-    return [choice(pokemons), choice(pokemons), choice(pokemons)]
+    return [
+        choice(pokemons),
+        choice(pokemons),
+        choice(pokemons)
+    ]
 
 
 def exec_input():
@@ -196,6 +200,6 @@ def fitness(my_team, team_target):
     pokemons = PokemonsData()
     for possible_counter in my_team:
         for countered in team_target:
-            fit += battle(possible_counter, countered, pokemons.get_df)
+            fit += battle(possible_counter, countered, pokemons.get_df())
 
     return fit

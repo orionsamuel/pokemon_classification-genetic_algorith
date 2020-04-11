@@ -10,4 +10,4 @@ team_target = []
 
 for index, steam in counters.iterrows():
     team_target = lstr_to_lint(steam, pokemons.df)
-    search_counters(team_target, pokemons.get_range)
+    search_counters(team_target, pokemons)
