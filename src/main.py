@@ -9,14 +9,6 @@ def print_result(result):
 if __name__ == '__main__':
 #main
     result = None
-    if len(sys.argv)<4:
-        result = search_counters(execInput())
-
-    elif len(sys.argv)==4:
-        del sys.argv[0]
-        result = search_counters(sys.argv)
-
-    else:
-        print("Bad input!")
-        exit()
+    del sys.argv[0]
+    result = search_counters(sys.argv)
     print_result(result)

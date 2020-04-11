@@ -17,6 +17,7 @@ db = read_csv("database/base-pokemon.csv")
 pokemons = list(db["pokedex_number"])
 ga = GeneticAlgorithm(pokemons, 50, 20, 0.8, 0.2, True, True)
 team_target = None
+team_size = None
 
 def execInput():
 #read the executation input if it exists (aux)
@@ -36,8 +37,11 @@ def lstr_to_lint(slist):
 
 
 def create_team(pokemons):
-#creating a team of 3 (individual)
-    return [random.choice(pokemons), random.choice(pokemons), random.choice(pokemons)]
+#creating a team (individual)
+    new_team = []
+    for _ in range(team_size):
+        new_team.append(random.choice(pokemons))
+    return new_team
 
 ga.create_individual = create_team
 
@@ -170,7 +174,7 @@ def best_against(team, target):
 
 def sort_best_team(counter):
 #sort the counter team to the best way against team target
-    target = sort_by_cp_reverse(team_target.copy())
+    target = team_target.copy()
     counter_copy = counter.copy()
     for index in range(len(target)):
         counter[index] = best_against(counter_copy, target[index])
@@ -206,12 +210,21 @@ def search_counters(team, return_names=True):
     tuple[2] -> fitness, how good is the counter team against "team"
     """
     global team_target
-    team_target = lstr_to_lint(team.copy()) 
+    global team_size
+    team_target = lstr_to_lint(team.copy())
+    team_length = len(team_target)
+    if team_length > 1:
+        team_size = team_length
+    else:
+        team_size = 6
     ga.run()
     best_team = sort_best_team(ga.best_individual()[1])
     best_move_sets = []
     for i in range(len(best_team)):
-        best_move_sets.append(best_typeset_against(best_team[i], team_target[i]))
+        if len(team_target) > 1:
+            best_move_sets.append(best_typeset_against(best_team[i], team_target[i]))
+        else:
+            best_move_sets.append(best_typeset_against(best_team[i], team_target[0]))
         if return_names:
             best_team[i] = pokenumber_to_pokename(best_team[i])
     return best_team, best_move_sets, ga.best_individual()[0]
