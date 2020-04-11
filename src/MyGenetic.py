@@ -2,7 +2,7 @@ from random import choice, randrange
 
 from pyeasyga.pyeasyga import GeneticAlgorithm
 
-from utils import create_team, fitness, get_pokename
+from utils import create_team, fitness, get_relative_pokename
 from dataset import PokemonsData
 
 """
@@ -19,8 +19,9 @@ ga = pyeasyga.GeneticAlgorithm(data,
 def team_mutation(team):
     """ this function will mutate a team according mutation tax, creating a new
     team in scope (mutation)"""
+    db = PokemonsData()
     mutate_index = randrange(len(team))
-    team[mutate_index] = choice(pokemons)
+    team[mutate_index] = choice(db.get_range())
 
 
 def team_crossover(team1, team2):
@@ -49,7 +50,6 @@ def search_counters(team_target, pokemons):
     ga.run()
     print(team_target)
 
-
     for pokemon in ga.best_individual()[1]:
-        print(get_pokename(pokemon))
+        print(get_relative_pokename(pokemon))
     print(ga.best_individual()[0])

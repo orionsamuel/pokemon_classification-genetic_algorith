@@ -1,12 +1,19 @@
 from utils import get_db
 
 
-class PokemonsData(object):
-    __instance = None
-    def __new__(cls, val):
-        if PokemonsData.__instance is None:
-            PokemonsData.__instance = object.__new__(cls)
-            PokemonsData.__instance.df = get_db(val)
-            PokemonsData.__instance.range = PokemonsData.__instance.df.\
-                pokedex_number.size
-        return PokemonsData.__instance
+class Singleton(type):
+    _instances = {}
+    def __call__(cls, *args, **kwargs):
+        if cls not in cls._instances:
+            cls._instances[cls] = super(Singleton, cls).__call__(*args, **kwargs)
+        return cls._instances[cls]
+
+class PokemonsData(metaclass=Singleton):
+    df = get_db()
+    range = df.pokedex_number.size
+
+    def get_df(self):
+        return self.df
+
+    def get_range(self):
+        return self.range
