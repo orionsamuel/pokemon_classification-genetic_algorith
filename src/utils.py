@@ -34,12 +34,12 @@ def create_team(pokemons):
     :param pokemons: a list with the items that will be selected
     :return: A team with three pokemon's in a list
     """
+    new_team = []
+    df = PokemonsData()
+    for i in range(df.get_team_size()):
+        new_team.append(choice(pokemons))
+    return new_team
 
-    return [
-        choice(pokemons),
-        choice(pokemons),
-        choice(pokemons)
-    ]
 
 
 def exec_input():
@@ -88,7 +88,7 @@ def get_cp(pokemon, df):
     return df.combat_point[pokemon]
 
 
-def get_db(file="base-pokemon",
+def get_db(file="base-pokemon",########################################
            path="database/",
            extension=".csv",
            header=0,
@@ -137,7 +137,7 @@ def get_relative_pokenumber(pokename, df):
     return Index(df.name).get_loc(pokename)
 
 
-def get_relative_pokename(pokenumber, df):
+def get_relative_pokename(pokenumber, df):####################################
     """
     receive a pokedex_number, and returns the pokemon name
     :param pokenumber: The number of the pokemon
@@ -183,8 +183,18 @@ def lstr_to_lint(slist, df):
             ilist.append(int(element))
         else:
             ilist.append(get_relative_pokenumber(element, df))
-
     return ilist
+
+
+def set_team_size(team_length, pokemons):
+    """
+    :param team_length: size of team target
+    :param pokemons: dataset that contains our data
+    """
+    if team_length > 1:
+        pokemons.set_team_size(team_length)
+    else:
+        pokemons.set_team_size(6)
 
 
 def fitness(my_team, df):
@@ -202,3 +212,62 @@ def fitness(my_team, df):
             fit += battle(possible_counter, countered, pokemons.get_df())
 
     return fit
+
+def is_sorted_by_cp_reverse(team):#####################################
+#verify if a team is sorted by CP in a reverse way (higher to lower)
+    db = PokemonsData().get_df()
+    for index in range(len(team)-1):
+        if db.loc[team[index], "combat_point"] < db.loc[team[index+1], "combat_point"]:
+            return False
+    return True
+
+#sort a team by the CP, higher to lower (reverse)
+    pokemon = PokemonsData()
+    db = pokemon.get_df()
+    for x in range(len(team)):
+        team[x] = pokemon_validation(team[x])
+    while not is_sorted_by_cp_reverse(team):
+        for index in range(len(team)-1):
+            if db.loc[team[index], "combat_point"] < db.loc[team[index+1], "combat_point"]:
+                tmp = team[index]
+                team[index] = team[index+1]
+                team[index+1] = tmp
+    for x in range(len(team)):
+        team[x] = pokemon_validation_reverse(team[x])
+    return team
+
+def best_against(team, target, df):
+#select the best pokemon of a team against one pokemon target
+    result = []
+    if len(team)>1:
+        for pokemon in team:
+            result.append(battle(pokemon, target, df))
+        return team[result.index(max(result))]
+    else:
+        return team[0]
+
+def sort_best_team(counter, df):
+#sort the counter team to the best way against team target
+    pokemons = PokemonsData()
+    target = pokemons.get_team_target()
+    team_target = pokemons.get_team_target()
+    counter_copy = counter.copy()
+    for index in range(len(target)):
+        counter[index] = best_against(counter_copy, target[index], df)
+        counter_copy.remove(counter[index])
+    for k in team_target:
+        tmp = counter[team_target.index(k)]
+        counter[team_target.index(k)] = counter[target.index(k)]
+        counter[target.index(k)] = tmp
+    return counter
+
+def best_typeset_against(pokemon1, pokemon2, df):
+#return the best type for moves set of pokemon1 against pokemon2
+    pokemon1 = get_relative_pokenumber(pokemon1, df)
+    pokemon2 = get_relative_pokenumber(pokemon2, df)
+    pokemon1_types = get_types(pokemon1, df)
+    pokemon1_against = []
+    for tp in pokemon1_types:
+        pokemon1_against.append(df.loc[pokemon2, "against_"+tp])
+
+    return pokemon1_types[pokemon1_against.index(max(pokemon1_against))]
