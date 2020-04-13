@@ -37,8 +37,9 @@ def create_team(pokemons):
     :return: A team with three pokemon's in a list
     """
     new_team = []
-    for i in range(pokemons.get_team_size()):
-        new_team.append(choice(pokemons.get_list()))
+    df = PokemonsData()
+    for i in range(df.get_team_size()):
+        new_team.append(choice(pokemons))
     return new_team
 
 
@@ -188,15 +189,16 @@ def lstr_to_lint(slist, df):
     return ilist
 
 
-def fitness(my_team, pokemons):
+def fitness(my_team, df):
     """
     This function evaluate the population
     :param my_team: A possible team
-    :param team_target: Team to beat
+    :param df: The database the library requisite this param
     :return: the sum of differences of multiplications the combat points with
         the best against of a type that a pokemon has
      """
     fit = 0
+    pokemons = PokemonsData()
     for possible_counter in my_team:
         for countered in pokemons.get_team_target():
             fit += battle(possible_counter, countered, pokemons.get_df())

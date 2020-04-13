@@ -1,8 +1,10 @@
 from random import randint
 
-from utils import (create_team, exec_input, fitness, get_db, get_pokename)
+from utils import (create_team, exec_input, fitness, get_db, get_relative_pokename)
 
-db = get_db("base-pokemon")
+from dataset import PokemonsData
+
+db = get_db("base-pokemon", "../database/")
 
 # Lista dos pokemon counter
 team_selection = []
@@ -28,8 +30,8 @@ def get_id():
         cont += 1
 
 
-def pokemon_validation(pokemon=list(range(len(get_db("base-pokemon"))))):
-    # validation for meltan and melmetal in our database
+# Validação para Meltan e Melmetal na base da dados
+def pokemon_validation(pokemon=list(range(len(get_db("base-pokemon", "../database/"))))):
 
     if pokemon == 808:
         return 650
@@ -51,7 +53,7 @@ def local_search():
         for j in range(change_num):
             counter = randint(db.pokedex_number[0], db.pokedex_number.size)
             team_selection[j] = counter
-        get_fitness = fitness(team_selection, team_target, db)
+        get_fitness = fitness(team_selection, team_target)
 
         if get_fitness > best_avaliation_local:
             best_avaliation_local = get_fitness
@@ -64,8 +66,10 @@ def local_search():
 def run():
     global best_team_selection
     global team_selection
-    pokemons = range(len(db.pokedex_number))
-    create_team(pokemons)
+    set_pokemon_data = PokemonsData()
+    pokemons = list(range(len(db.pokedex_number)))
+    team_selection = create_team(pokemons)
+    set_pokemon_data.set_team_target(team_selection)
     get_id()
 
     for i in team_selection:
@@ -74,7 +78,7 @@ def run():
     print(team_target_name)
     best_evaluation, best_team_selection = local_search()
     for pokemon in best_team_selection:
-        print(get_pokename(pokemon, db))
+        print(get_relative_pokename(pokemon, db))
     print("Best Evaluation : " + str(best_evaluation))
     print("Team Counter:")
     print(best_team_selection_name)

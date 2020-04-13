@@ -11,7 +11,7 @@ class Singleton(type):
 class PokemonsData(metaclass=Singleton):
 
     def __init__(self):
-        self._df = read_csv("database/base-pokemon.csv")
+        self._df = read_csv("../database/base-pokemon.csv")
         self._list = self._df["pokedex_number"]
         self._team_target = []
         self._team_size = 3
