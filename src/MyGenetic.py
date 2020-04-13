@@ -38,8 +38,8 @@ def team_selection(gen):
     return choice(gen)
 
 
-def search_counters(team_target, pokemons):
-    print(team_target)
+def search_counters(pokemons):
+    print(pokemons.get_team_target())
     ga = GeneticAlgorithm(list(range(pokemons.get_range())), 50, 15, 0.8, 0.2,
                           True,
                           True)
@@ -50,7 +50,7 @@ def search_counters(team_target, pokemons):
     ga.fitness_function = fitness
     # application of ga
     ga.run()
-    print(team_target)
+    print(pokemons.get_team_target())
 
     for pokemon in ga.best_individual()[1]:
         print(get_relative_pokename(pokemon, pokemons.get_df()))

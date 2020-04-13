@@ -155,7 +155,6 @@ def get_true_pokenumber(pokename, df):
     :param df: the dataset that will be user to search the pokemon
     :return: the pokedex ID of this pokemon
     """
-
     return df.pokedex_number[Index(df.name).get_loc(pokename)]
 
 
@@ -188,18 +187,18 @@ def lstr_to_lint(slist, df):
     return ilist
 
 
-def fitness(my_team, team_target):
+def fitness(my_team, df):
     """
     This function evaluate the population
     :param my_team: A possible team
-    :param team_target: Team to beat
+    :param df: The database the library requisite this param
     :return: the sum of differences of multiplications the combat points with
         the best against of a type that a pokemon has
      """
     fit = 0
     pokemons = PokemonsData()
     for possible_counter in my_team:
-        for countered in team_target:
+        for countered in pokemons.get_team_target():
             fit += battle(possible_counter, countered, pokemons.get_df())
 
     return fit

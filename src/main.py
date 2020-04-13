@@ -9,5 +9,10 @@ counters = get_db("teams", header=None, sep=" ")
 team_target = []
 
 for index, steam in counters.iterrows():
-    team_target = lstr_to_lint(steam, pokemons.df)
-    search_counters(team_target, pokemons)
+    team_target = lstr_to_lint(steam, pokemons.get_df())
+    pokemons.set_team_target(team_target)
+    if index == 0:
+        search_counters(pokemons)
+    else:
+        break
+print("FINISH!")
