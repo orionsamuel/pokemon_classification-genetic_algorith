@@ -1,10 +1,8 @@
 from random import choice, randrange
 
-from pyeasyga.pyeasyga import GeneticAlgorithm
-
-from utils import create_team, fitness
 from dataset import PokemonsData
-
+from pyeasyga.pyeasyga import GeneticAlgorithm
+from utils import create_team, fitness
 """
 ga = pyeasyga.GeneticAlgorithm(data,
                                population_size=10,
@@ -26,6 +24,7 @@ def team_mutation(team):
 
 def team_crossover(team1, team2):
     # making two new teams to compose the new generation
+
     for k in range(randrange(len(team1))):
         tmp = team1[k]
         team1[k] = team2[k]
@@ -36,8 +35,10 @@ def team_crossover(team1, team2):
 
 def team_selection(gen):
     bests = []
-    for i in range(len(gen)//5):
+
+    for i in range(len(gen) // 5):
         bests.append(gen[i])
+
     return choice(bests)
 
 
@@ -51,8 +52,7 @@ def search_counters(pokemons):
     tuple[2] -> fitness, how good is the counter team against "team"
     """
     ga = GeneticAlgorithm(list(range(pokemons.get_range())), 50, 20, 0.8, 0.2,
-                          True,
-                          True)
+                          True, True)
     ga.create_individual = create_team
     ga.mutate_function = team_mutation
     ga.crossover_function = team_crossover

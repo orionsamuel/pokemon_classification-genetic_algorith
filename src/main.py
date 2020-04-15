@@ -1,44 +1,52 @@
 from time import time
 
-from MyGenetic import search_counters
-from utils import get_db, lstr_to_lint
 from dataset import PokemonsData
-import csv
-
-
-def write_csv(name, values):
-    try:
-        with open(name, "w", encoding="UTF-8") as csvFile:
-            writer = csv.writer(csvFile)
-            writer.writerows(values)
-        csvFile.close()
-    except IOError:
-        print("Invalid name")
-        raise
-
-
-# lista = []
-def get_fitness(t):
-    return t[1]
+from ils import run
+from memetic import memetic_search
+from MyGenetic import search_counters
+from pandas import DataFrame
+from utils import get_db, lstr_to_lint, save_data
 
 pokemons = PokemonsData()
 counters = get_db("teams", header=None, sep=" ")
+columns = ["time", "teams", "fitness"]
+genetic = DataFrame(columns=columns)
+memetic = DataFrame(columns=columns)
+local = DataFrame(columns=columns)
 
 for index, steam in counters.iterrows():
     team_target = lstr_to_lint(steam, pokemons.get_df())
     pokemons.set_team_target(team_target)
-    start = []
-    stop = []
-    genetic_results = []
-    search_results = []
-    if index == 0:
-        for i in range(5):
-            start.append(time())
-            genetic_results.append(search_counters(pokemons))
-            stop.append(time())
-            ## Salvando em lista
-            genetic_results.sort(key=get_fitness, reverse=True)
-            write_csv("team_fit_genetic.csv", genetic_results)  ## Fazendo um append
-    else:
-        break
+
+    for _ in range(5):
+        start = time()
+        search_team, search_fit = search_counters(pokemons)
+        stop = time()
+        row = DataFrame({
+            "time": [round(stop - start, 2)],
+            "teams": [str(search_team).replace(', ', '-')],
+            "fitness": [search_fit]
+        })
+        genetic = genetic.append(row, ignore_index=True)
+        start = time()
+        search_team, search_fit = run(pokemons)
+        stop = time()
+        row = DataFrame({
+            "time": [round(stop - start, 2)],
+            "teams": [str(search_team).replace(', ', '-')],
+            "fitness": [search_fit]
+        })
+        local = local.append(row, ignore_index=True)
+        start = time()
+        search_team, search_fit = memetic_search(pokemons, 50)
+        stop = time()
+        row = DataFrame({
+            "time": [round(stop - start, 2)],
+            "teams": [str(search_team).replace(', ', '-')],
+            "fitness": [search_fit]
+        })
+        memetic = memetic.append(row, ignore_index=True)
+save_data("genetico.csv", genetic)
+save_data("local.csv", local)
+save_data("memetico.csv", memetic)
 print("FINISH!")
