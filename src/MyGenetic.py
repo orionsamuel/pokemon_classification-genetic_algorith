@@ -1,7 +1,7 @@
 from random import choice, randrange
 
 from dataset import PokemonsData
-from pyeasyga.pyeasyga import GeneticAlgorithm
+from GaPokemon import GaPokemon
 from utils import create_team, fitness
 """
 ga = pyeasyga.GeneticAlgorithm(data,
@@ -51,8 +51,7 @@ def search_counters(pokemons):
     tuple[1] -> best type for move sets of counter[k] against "team"[k]
     tuple[2] -> fitness, how good is the counter team against "team"
     """
-    ga = GeneticAlgorithm(list(range(pokemons.get_range())), 50, 20, 0.8, 0.2,
-                          True, True)
+    ga = GaPokemon(list(range(pokemons.get_range())), 50, 20, 0.8, 0.2, True, True)
     ga.create_individual = create_team
     ga.mutate_function = team_mutation
     ga.crossover_function = team_crossover
