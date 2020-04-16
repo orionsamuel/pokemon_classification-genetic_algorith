@@ -277,7 +277,7 @@ def best_typeset_against(pokemon1, pokemon2, df):
 
 def save_data(name, df):
     try:
-        df.to_csv(name, index=False)
+        df.to_csv(name, mode="a", index=False, header=False)
     except IOError:
         print("Invalid name")
         raise
