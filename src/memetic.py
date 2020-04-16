@@ -18,9 +18,14 @@ class Memetic(GeneticAlgorithm):
         self.rank_population()
 
         for _ in range(1, self.generations):
-            self.create_next_generation()
-            self.do_local_search()
-            self.rank_population()
+            actual_generation = list(self.last_generation())
+
+            if actual_generation[0][0] != actual_generation[-1][0]:
+                self.create_next_generation()
+                self.do_local_search()
+                self.rank_population()
+            else:
+                break
 
     def do_local_search(self):
         for individual in self.current_generation:

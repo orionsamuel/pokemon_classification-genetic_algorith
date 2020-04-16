@@ -89,12 +89,11 @@ def get_cp(pokemon, df):
     return df.combat_point[pokemon]
 
 
-def get_db(
-    file="base-pokemon",  ########################################
-    path="database/",
-    extension=".csv",
-    header=0,
-    sep=","):
+def get_db(file="base-pokemon",
+           path="database/",
+           extension=".csv",
+           header=0,
+           sep=","):
     """
     :param file: Name of the dataset
     :param path: Path to the dataset
