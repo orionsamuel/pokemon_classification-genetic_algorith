@@ -3,5 +3,7 @@ version: '3.6'
 services:
   tensorflow:
     build: .
+    env_file:
+      - ./config.env
     volumes:
-      - ./src:/app
+      - ./:/app
