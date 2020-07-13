@@ -30,7 +30,7 @@ class Memetic(GeneticAlgorithm):
     def do_local_search(self):
         for individual in self.current_generation:
             individual.genes, individual.fitness = local_search(
-                self.seed_data, individual.genes, 100)
+                self.seed_data, individual.genes, 10)
 
 
 def memetic_search(pokemons, iterations):
